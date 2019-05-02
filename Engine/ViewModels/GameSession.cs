@@ -25,6 +25,8 @@ namespace Engine.ViewModels
                 OnPropertyChanged(nameof(HasLocationToSouth));
                 OnPropertyChanged(nameof(HasLocationToEast));
                 OnPropertyChanged(nameof(HasLocationToWest));
+
+                GivePlayerQuestsAtLocation();
             }
         }
         public World CurrentWorld { get; set; }
@@ -70,17 +72,11 @@ namespace Engine.ViewModels
                 Gold = 1000000,
                 ExperiencePoints = 0,
                 Level = 1
-            };
+            };                     
 
-
-                      
-
-            //WorldFactory factory = new WorldFactory();
             CurrentWorld = WorldFactory.CreateWorld();
 
             CurrentLocation = CurrentWorld.LocationAt(0, -1);
-
-            //CurrentPlayer.Inventory.Add(ItemFactory.CreateGameItem(1001));
         }
 
         public void MoveNorth()
@@ -117,6 +113,17 @@ namespace Engine.ViewModels
                 CurrentLocation = CurrentWorld.LocationAt(CurrentLocation.XCoordinate - 1, CurrentLocation.YCoordinate);
             }
             
+        }
+
+        private void GivePlayerQuestsAtLocation()
+        {
+            foreach(Quest quest in CurrentLocation.QuestsAvailableHere)
+            {
+                if(!CurrentPlayer.Quests.Any(q => q.PlayerQuest.ID == quest.ID))
+                {
+                    CurrentPlayer.Quests.Add(new QuestStatus(quest));
+                }
+            }
         }
     }
 }
